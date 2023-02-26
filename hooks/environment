@@ -2,6 +2,7 @@
 # vim: set ft=sh:
 
 set -eou pipefail
+set -x
 
 main() {
   local addr="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_VAULT_ADDR:-}"
