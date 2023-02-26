@@ -19,9 +19,9 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_VAULT_AWS_CREDS_VAULT_ADDR="http://vault:8200"
 
   stub vault \
-    'write -format=json aws/sts/foo ttl=3600s : cat tests/fixtures/vault-post-sts.json'
+    'read -format=json aws/sts/foo ttl=3600s : cat tests/fixtures/vault-post-sts.json'
 
-  run bash -c "source $PWD/hooks/environment && env"
+  run bash -c "source $PWD/hooks/environment && env | sort"
   assert_success
   assert_output --partial "AWS_ACCESS_KEY_ID=AKFOO"
   assert_output --partial "AWS_SECRET_ACCESS_KEY=abc"
@@ -45,9 +45,9 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_VAULT_AWS_CREDS_ENV_PREFIX="BUILDKITE_"
 
   stub vault \
-    'write -format=json aws-creds/sts/bar ttl=7200s role_arn=aws:arn:iam:123456789012:role/bar role_session_name=my-sesh : cat tests/fixtures/vault-post-sts.json'
+    'read -format=json aws-creds/sts/bar ttl=7200s role_arn=aws:arn:iam:123456789012:role/bar role_session_name=my-sesh : cat tests/fixtures/vault-post-sts.json'
 
-  run bash -c "source $PWD/hooks/environment && env"
+  run bash -c "source $PWD/hooks/environment && env | sort"
   assert_success
   assert_output --partial "BUILDKITE_AWS_ACCESS_KEY_ID=AKFOO"
   assert_output --partial "BUILDKITE_AWS_SECRET_ACCESS_KEY=abc"
