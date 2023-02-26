@@ -33,9 +33,11 @@ main() {
   echo $VAULT_TOKEN
   json=$(vault write \
     -format=json \
+    -f \
     "$path/sts/$role" \
-    "${vault_args[@]}"
   )
+    # "${vault_args[@]}"
+  # )
   export "${prefix}AWS_ACCESS_KEY_ID=$(jq -r '.data.access_key' <<<"$json")"
   export "${prefix}AWS_SECRET_ACCESS_KEY"="$(jq -r '.data.secret_key' <<<"$json")"
   export "${prefix}AWS_SESSION_TOKEN"="$(jq -r '.data.security_token' <<<"$json")"
