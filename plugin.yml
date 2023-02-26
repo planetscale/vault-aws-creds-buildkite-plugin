@@ -1,0 +1,26 @@
+name: Vault AWS Credentials
+description: Generate temporary AWS IAM credentials from Hashicorp Vault AWS secrets backend
+author: https://github.com/planetscale
+requirements:
+  - bash
+  - vault
+  - jq
+configuration:
+  properties:
+    vault_addr:
+      type: string
+    path:
+      type: string
+    role:
+      type: string
+    ttl:
+      type: string
+    role_arn:
+      type: string
+    session_name:
+      type: string
+    env_prefix:
+      type: string
+  required:
+    - vault_addr
+  additionalProperties: false

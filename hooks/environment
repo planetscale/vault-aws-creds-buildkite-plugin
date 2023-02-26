@@ -1,0 +1,43 @@
+#!/bin/bash
+# vim: set ft=sh:
+
+set -eou pipefail
+
+main() {
+  local addr="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_VAULT_ADDR:-}"
+  local path="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_PATH:-aws}"
+  local role="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_ROLE:-$BUILDKITE_PIPELINE_SLUG}"
+  local ttl="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_TTL:-3600s}"
+  local role_arn="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_ROLE_ARN:-}"
+  local session_name="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_SESSION_NAME:-}"
+  local prefix="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_ENV_PREFIX:-}"
+
+  local vault_args=()
+
+  if [[ -z "$addr" ]]; then
+    echo -e "~~~ :vault: \033[33mVault AWS Creds Plugin\033[0m. No 'vault_addr' specified. Skipping."
+    exit 0
+  fi
+
+  if [[ -n "$role_arn" ]]; then
+    vault_args+=("role_arn=$role_arn")
+  fi
+
+  if [[ -n "$session_name" ]]; then
+    vault_args+=("role_session_name=$session_name")
+  fi
+
+  json=$(vault write \
+    -format=json \
+    "$path/sts/$role" \
+    "ttl=$ttl" \
+    "${vault_args[@]}"
+  )
+  export "${prefix}AWS_ACCESS_KEY_ID=$(jq -r '.data.access_key' <<<"$json")"
+  export "${prefix}AWS_SECRET_ACCESS_KEY"="$(jq -r '.data.secret_key' <<<"$json")"
+  export "${prefix}AWS_SESSION_TOKEN"="$(jq -r '.data.security_token' <<<"$json")"
+
+  echo -e "~~~ :vault: \033[33mVault AWS Creds Plugin\033[0m. Success."
+}
+
+main "$@"
