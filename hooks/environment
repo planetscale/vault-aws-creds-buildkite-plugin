@@ -15,7 +15,7 @@ main() {
   local vault_args=()
 
   if [[ -z "$addr" ]]; then
-    echo -e "~~~ :vault: \033[33mVault AWS Creds Plugin\033[0m. No 'vault_addr' specified. Skipping."
+    echo -e "~~~ :aws: :vault: \033[33mVault AWS Creds Plugin\033[0m. No 'vault_addr' specified. Skipping."
     exit 0
   fi
 
@@ -39,7 +39,7 @@ main() {
   export "${prefix}AWS_SECRET_ACCESS_KEY"="$(jq -r '.data.secret_key' <<<"$json")"
   export "${prefix}AWS_SESSION_TOKEN"="$(jq -r '.data.security_token' <<<"$json")"
 
-  echo -e "~~~ :vault: \033[33mVault AWS Creds Plugin\033[0m. Success."
+  echo -e "~~~ :aws: :vault: \033[33mVault AWS Creds Plugin\033[0m. Success."
 }
 
 main "$@"
