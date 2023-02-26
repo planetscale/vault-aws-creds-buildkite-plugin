@@ -19,6 +19,8 @@ main() {
     exit 0
   fi
 
+  vault_args+=(ttl="$ttl")
+
   if [[ -n "$role_arn" ]]; then
     vault_args+=("role_arn=$role_arn")
   fi
@@ -27,10 +29,10 @@ main() {
     vault_args+=("role_session_name=$session_name")
   fi
 
-  json=$(vault write \
+  json=$(vault \
+    read \
     -format=json \
     "$path/sts/$role" \
-    "ttl=$ttl" \
     "${vault_args[@]}"
   )
   export "${prefix}AWS_ACCESS_KEY_ID=$(jq -r '.data.access_key' <<<"$json")"
