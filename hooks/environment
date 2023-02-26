@@ -30,6 +30,7 @@ main() {
     vault_args+=("role_session_name=$session_name")
   fi
 
+  echo $VAULT_TOKEN
   json=$(vault write \
     -format=json \
     "$path/sts/$role" \
