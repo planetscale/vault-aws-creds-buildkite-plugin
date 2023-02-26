@@ -3,6 +3,11 @@
 
 set -eou pipefail
 
+declare brown="\033[33m"
+declare green="\033[32m"
+declare red="\033[31m"
+declare reset="\033[0m"
+
 main() {
   local addr="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_VAULT_ADDR:-}"
   local path="${BUILDKITE_PLUGIN_VAULT_AWS_CREDS_PATH:-aws}"
@@ -15,7 +20,7 @@ main() {
   local vault_args=()
 
   if [[ -z "$addr" ]]; then
-    echo -e "~~~ :aws-iam: \033[33mVault AWS Creds Plugin\033[0m. No 'vault_addr' specified. Skipping."
+    echo -e "~~~ :aws-iam: ${brown}Vault AWS Creds Plugin${reset}. No 'vault_addr' specified. ${red}Skipping.${reset}"
     exit 0
   fi
 
@@ -39,7 +44,7 @@ main() {
   export "${prefix}AWS_SECRET_ACCESS_KEY"="$(jq -r '.data.secret_key' <<<"$json")"
   export "${prefix}AWS_SESSION_TOKEN"="$(jq -r '.data.security_token' <<<"$json")"
 
-  echo -e "~~~ :aws-iam: \033[33mVault AWS Creds Plugin\033[0m. Successfully added AWS IAM credentials to the environment."
+  echo -e "~~~ :aws-iam: ${brown}Vault AWS Creds Plugin${reset}: ${green}OK${reset}: added AWS IAM credentials to the environment."
 }
 
 main "$@"
