@@ -1,6 +1,5 @@
 agent:
-  queue: private
-  # queue: public
+  queue: public
 
 steps:
   - name: lint-shellcheck
